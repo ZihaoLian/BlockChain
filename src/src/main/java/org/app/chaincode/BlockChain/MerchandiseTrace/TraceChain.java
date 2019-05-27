@@ -1,4 +1,4 @@
-package MerchandiseTrace;
+package org.app.chaincode.BlockChain.MerchandiseTrace;
 
 import java.util.*;
 
@@ -37,17 +37,17 @@ public class TraceChain {
     /**
      * 
      */
-    private DateTime manufacturerTime;
+    private Date manufacturerTime;
 
     /**
      * 
      */
-    private DateTime transporterTime;
+    private Date transporterTime;
 
     /**
      * 
      */
-    private DateTime retailerTime;
+    private Date retailerTime;
 
     /**
      * @return
