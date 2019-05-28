@@ -60,9 +60,9 @@ public class Config {
 
 	public static final String CHAINCODE_ROOT_DIR = "chaincode";
 
-	public static final String CHAINCODE_1_NAME = "bitcoupon";
+	public static final String CHAINCODE_1_NAME = "merchandise";
 
-	public static final String CHAINCODE_1_PATH = "github.com/bitcoupon";
+	public static final String CHAINCODE_1_PATH = "github.com/merchandise";
 
 	public static final String CHAINCODE_1_VERSION = "1";
 

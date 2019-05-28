@@ -2,8 +2,6 @@ package org.app.chaincode.BlockChain.MerchandiseTrace;
 
 import java.util.*;
 
-import javax.management.relation.RoleInfo;
-import javax.print.attribute.standard.DateTimeAtCompleted;
 
 //import org.apache.commons.collections.keyvalue.TiedMapEntry;
 
@@ -20,26 +18,12 @@ public abstract class Order {
         this.manufacturer = manufacturer;
         this.transporter = transporter;
         this.retailer = retailer;
-        this.time = new Date();
-    }
-
-    public Order(String m_ID, Manufacturer manufacturer, Transporter transporter, Retailer retailer, Date time) {
-        this.merchandiseID = m_ID;
-        this.manufacturer = manufacturer;
-        this.transporter = transporter;
-        this.retailer = retailer;
-        this.time = time;
     }
     
     /**
      * 
      */
     protected String merchandiseID;
-
-    /**
-     * 
-     */
-    protected Date time = null;
 
     /**
      * 
@@ -107,18 +91,6 @@ public abstract class Order {
     public void setMerchandiseID(String m_ID){
         merchandiseID = m_ID;
     }
-
-    public Date getComfirmTime(){
-        return time;
-    }
-
-    public void setComfirmTime(Date t){
-        time = t;
-    }
-
-	public Date getTime() {
-		return time;
-	}
 
 	public Manufacturer getManufacturer() {
 		return manufacturer;

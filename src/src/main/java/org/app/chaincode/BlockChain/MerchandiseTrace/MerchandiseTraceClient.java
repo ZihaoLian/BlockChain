@@ -21,6 +21,8 @@ import org.hyperledger.fabric.sdk.ProposalResponse;
 import org.hyperledger.fabric.sdk.TransactionProposalRequest;
 import org.hyperledger.fabric.sdk.ChaincodeResponse.Status;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 
 
 /**
@@ -92,13 +94,12 @@ public class MerchandiseTraceClient {
             String transporterName = order.getTransporter().getName();
             String retailerName = order.getRetailer().getName();
             String merchandiseID = order.getMerchandiseID();
-            String time = order.getTime().toString();
             
             TransactionProposalRequest request = fabClient.getInstance().newTransactionProposalRequest();
 			ChaincodeID ccid = ChaincodeID.newBuilder().setName(Config.CHAINCODE_1_NAME).build();
 			request.setChaincodeID(ccid);
-			request.setFcn("invokeInside");
-		    String[] arguments = { manufacturerName, transporterName, retailerName, merchandiseID, time };
+			request.setFcn("publishOrder");
+		    String[] arguments = { manufacturerName, transporterName, retailerName, merchandiseID};
 			request.setArgs(arguments);
 			request.setProposalWaitTime(1000);
 
@@ -150,7 +151,6 @@ public class MerchandiseTraceClient {
 			channel.initialize();
 
 			String roleName = role.getName();
-			/*
 			String roleType = null;
 			if (role instanceof Manufacturer)
 				roleType = "Manufacturer";
@@ -158,16 +158,17 @@ public class MerchandiseTraceClient {
 				roleType = "Transporter";
 			else
 				roleType = "Retailer";
-			*/
+			
 			
 			Thread.sleep(10000);
-			String[] args = {roleName};
+			String[] args = {roleName, roleType};
 			Logger.getLogger(MerchandiseTraceClient.class.getName()).log(Level.INFO, "Querying by role - " + args[0]);
 			
-			Collection<ProposalResponse>  responsesQuery = channelClient.queryByChainCode("fabcar", "queryCar", args);
+			Collection<ProposalResponse>  responsesQuery = channelClient.queryByChainCode("merchandise", "queryPendingByValue", args);
 			for (ProposalResponse pres : responsesQuery) {
 				String stringResponse = new String(pres.getChaincodeActionResponsePayload());
 				Logger.getLogger(MerchandiseTraceClient.class.getName()).log(Level.INFO, stringResponse);
+				return ResponseParser.parseChains(stringResponse);
 			}		
 			
 		} catch (Exception e) {
@@ -214,10 +215,11 @@ public class MerchandiseTraceClient {
 			String[] args = {merchandiseID};
 			Logger.getLogger(MerchandiseTraceClient.class.getName()).log(Level.INFO, "Querying by merchandiseID - " + args[0]);
 			
-			Collection<ProposalResponse>  responsesQuery = channelClient.queryByChainCode("fabcar", "queryCar", args);
+			Collection<ProposalResponse>  responsesQuery = channelClient.queryByChainCode("merchandise", "queryPendingById", args);
 			for (ProposalResponse pres : responsesQuery) {
 				String stringResponse = new String(pres.getChaincodeActionResponsePayload());
 				Logger.getLogger(MerchandiseTraceClient.class.getName()).log(Level.INFO, stringResponse);
+				return ResponseParser.parseChain(stringResponse);
 			}		
 			
 		} catch (Exception e) {
@@ -296,13 +298,13 @@ public class MerchandiseTraceClient {
 
     	try{
             Util.cleanUp();
-            String caUrl = Config.CA_ORG1_URL;
+            String caUrl = Config.CA_ORG2_URL;
 			CAClient caClient = new CAClient(caUrl, null);
 			// Enroll Admin to Org1MSP
 			UserContext adminUserContext = new UserContext();
 			adminUserContext.setName(Config.ADMIN);
-			adminUserContext.setAffiliation(Config.ORG1);
-			adminUserContext.setMspId(Config.ORG1_MSP);
+			adminUserContext.setAffiliation(Config.ORG2);
+			adminUserContext.setMspId(Config.ORG2_MSP);
 			caClient.setAdminUserContext(adminUserContext);
 			adminUserContext = caClient.enrollAdminUser(Config.ADMIN, Config.ADMIN_PASSWORD);
 
@@ -310,7 +312,7 @@ public class MerchandiseTraceClient {
             
             ChannelClient channelClient = fabClient.createChannelClient(Config.CHANNEL_NAME);
 			Channel channel = channelClient.getChannel();
-			Peer peer = fabClient.getInstance().newPeer(Config.ORG1_PEER_0, Config.ORG1_PEER_0_URL);
+			Peer peer = fabClient.getInstance().newPeer(Config.ORG2_PEER_0, Config.ORG2_PEER_0_URL);
 			EventHub eventHub = fabClient.getInstance().newEventHub("eventhub01", "grpc://localhost:7053");
 			Orderer orderer = fabClient.getInstance().newOrderer(Config.ORDERER_NAME, Config.ORDERER_URL);
 			channel.addPeer(peer);
@@ -322,8 +324,8 @@ public class MerchandiseTraceClient {
             TransactionProposalRequest request = fabClient.getInstance().newTransactionProposalRequest();
 			ChaincodeID ccid = ChaincodeID.newBuilder().setName(Config.CHAINCODE_1_NAME).build();
 			request.setChaincodeID(ccid);
-			request.setFcn("invokeInside");
-		    String[] arguments = { merchandiseID };
+			request.setFcn("confirm");
+		    String[] arguments = { merchandiseID, "Retailer" };
 			request.setArgs(arguments);
 			request.setProposalWaitTime(1000);
 
@@ -353,13 +355,13 @@ public class MerchandiseTraceClient {
         // TODO implement here
     	try{
             Util.cleanUp();
-            String caUrl = Config.CA_ORG1_URL;
+            String caUrl = Config.CA_ORG2_URL;
 			CAClient caClient = new CAClient(caUrl, null);
 			// Enroll Admin to Org1MSP
 			UserContext adminUserContext = new UserContext();
 			adminUserContext.setName(Config.ADMIN);
-			adminUserContext.setAffiliation(Config.ORG1);
-			adminUserContext.setMspId(Config.ORG1_MSP);
+			adminUserContext.setAffiliation(Config.ORG2);
+			adminUserContext.setMspId(Config.ORG2_MSP);
 			caClient.setAdminUserContext(adminUserContext);
 			adminUserContext = caClient.enrollAdminUser(Config.ADMIN, Config.ADMIN_PASSWORD);
 
@@ -367,7 +369,7 @@ public class MerchandiseTraceClient {
             
             ChannelClient channelClient = fabClient.createChannelClient(Config.CHANNEL_NAME);
 			Channel channel = channelClient.getChannel();
-			Peer peer = fabClient.getInstance().newPeer(Config.ORG1_PEER_0, Config.ORG1_PEER_0_URL);
+			Peer peer = fabClient.getInstance().newPeer(Config.ORG2_PEER_0, Config.ORG2_PEER_0_URL);
 			EventHub eventHub = fabClient.getInstance().newEventHub("eventhub01", "grpc://localhost:7053");
 			Orderer orderer = fabClient.getInstance().newOrderer(Config.ORDERER_NAME, Config.ORDERER_URL);
 			channel.addPeer(peer);
@@ -380,7 +382,7 @@ public class MerchandiseTraceClient {
 			ChaincodeID ccid = ChaincodeID.newBuilder().setName(Config.CHAINCODE_1_NAME).build();
 			request.setChaincodeID(ccid);
 			request.setFcn("invokeInside");
-		    String[] arguments = { merchandiseID };
+		    String[] arguments = { merchandiseID, "Transporter" };
 			request.setArgs(arguments);
 			request.setProposalWaitTime(1000);
 
