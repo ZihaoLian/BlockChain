@@ -325,7 +325,7 @@ public class MerchandiseTraceClient {
 			ChaincodeID ccid = ChaincodeID.newBuilder().setName(Config.CHAINCODE_1_NAME).build();
 			request.setChaincodeID(ccid);
 			request.setFcn("confirm");
-		    String[] arguments = { merchandiseID, "Retailer" };
+		    String[] arguments = { "Retailer", merchandiseID };
 			request.setArgs(arguments);
 			request.setProposalWaitTime(1000);
 
@@ -382,7 +382,7 @@ public class MerchandiseTraceClient {
 			ChaincodeID ccid = ChaincodeID.newBuilder().setName(Config.CHAINCODE_1_NAME).build();
 			request.setChaincodeID(ccid);
 			request.setFcn("invokeInside");
-		    String[] arguments = { merchandiseID, "Transporter" };
+		    String[] arguments = { "Transporter", merchandiseID };
 			request.setArgs(arguments);
 			request.setProposalWaitTime(1000);
 

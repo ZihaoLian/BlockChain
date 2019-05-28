@@ -1,11 +1,6 @@
 package org.app.chaincode.BlockChain.MerchandiseTrace;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Date;
-
-import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyAgreementSpi.CDHwithSHA1KDFAndSharedInfo;
-import org.bouncycastle.jcajce.provider.symmetric.Threefish;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -31,9 +26,9 @@ public class ResponseParser {
             String manufacturerName = json.get("manufacturer").getAsString();
             String transporterName = json.get("transporter").getAsString();
             String retailerName = json.get("retailer").getAsString();
-            String manufacturerTime = json.get("time1").getAsString();
-            String transporterTime = json.get("time2").getAsString();
-            String retailerTime = json.get("time3").getAsString();
+            String manufacturerTime = json.get("createTime").getAsString();
+            String transporterTime = json.get("transportTime").getAsString();
+            String retailerTime = json.get("receiveTime").getAsString();
 
             Manufacturer manufacturer = new Manufacturer(manufacturerName);
             Transporter transporter = new Transporter(transporterName);
@@ -70,7 +65,7 @@ public class ResponseParser {
 		return null;
 	}
 	
-public static ArrayList<TraceChain> parseChains(String payload) {
+	public static ArrayList<TraceChain> parseChains(String payload) {
 		
 		JsonParser parse =new JsonParser(); 
 		
@@ -84,9 +79,9 @@ public static ArrayList<TraceChain> parseChains(String payload) {
 	            String manufacturerName = json.get("manufacturer").getAsString();
 	            String transporterName = json.get("transporter").getAsString();
 	            String retailerName = json.get("retailer").getAsString();
-	            String manufacturerTime = json.get("time1").getAsString();
-	            String transporterTime = json.get("time2").getAsString();
-	            String retailerTime = json.get("time3").getAsString();
+	            String manufacturerTime = json.get("createTime").getAsString();
+	            String transporterTime = json.get("transportTime").getAsString();
+	            String retailerTime = json.get("receiveTime").getAsString();
 
 	            Manufacturer manufacturer = new Manufacturer(manufacturerName);
 	            Transporter transporter = new Transporter(transporterName);
